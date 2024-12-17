@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch By Bilal Parray </title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            color: #343a40;
+        }
+
+        .stopwatch-container {
+            max-width: 500px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .stopwatch-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #007bff;
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .btn-group button {
+            width: 100px;
+            font-weight: 600;
+        }
+
+        #laps {
+            margin-top: 20px;
+        }
+
+        #laps-table {
+            width: 100%;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Stopwatch Container -->
+    <div class="stopwatch-container">
+        <h1 class="mb-4 text-primary">Professional Stopwatch</h1>
+        <!-- Stopwatch Display -->
+        <div class="stopwatch-display" id="display">00:00:00.000</div>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+            <button id="start" class="btn btn-success">Start</button>
+            <button id="pause" class="btn btn-warning">Pause</button>
+            <button id="reset" class="btn btn-danger">Reset</button>
+            <button id="lap" class="btn btn-info">Lap</button>
+        </div>
+
+        <!-- Laps Section -->
+        <div id="laps">
+            <h4 class="mt-4 text-secondary">Lap Times</h4>
+            <table class="table table-bordered mt-3" id="laps-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="laps-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Stopwatch App | Designed with ❤️ using jQuery & Bootstrap By <a
+                href="https://bilalparray.github.io/resume/" target="_blank">Bilal Parray</a></p>
+    </footer>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Stopwatch Script -->
+    <script>
+        $(document).ready(function () {
+            let startTime;
+            let updatedTime;
+            let difference;
+            let timerInterval;
+            let running = false;
+            let lapCounter = 1;
+
+            const display = $("#display");
+            const lapsBody = $("#laps-body");
+
+            function formatTime(ms) {
+                const date = new Date(ms);
+                const hours = String(date.getUTCHours()).padStart(2, '0');
+                const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+                const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+                return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+            }
+
+            function startTimer() {
+                if (!running) {
+                    startTime = new Date().getTime() - (difference || 0);
+                    timerInterval = setInterval(() => {
+                        updatedTime = new Date().getTime();
+                        difference = updatedTime - startTime;
+                        display.text(formatTime(difference));
+                    }, 10);
+                    running = true;
+                }
+            }
+
+            function pauseTimer() {
+                clearInterval(timerInterval);
+                running = false;
+            }
+
+            function resetTimer() {
+                clearInterval(timerInterval);
+                display.text("00:00:00.000");
+                difference = 0;
+                running = false;
+                lapCounter = 1;
+                lapsBody.empty();
+            }
+
+            function recordLap() {
+                if (running) {
+                    const lapTime = formatTime(difference);
+                    const lapRow = `<tr><td>${lapCounter}</td><td>${lapTime}</td></tr>`;
+                    lapsBody.append(lapRow);
+                    lapCounter++;
+                }
+            }
+
+            // Event Listeners
+            $("#start").click(startTimer);
+            $("#pause").click(pauseTimer);
+            $("#reset").click(resetTimer);
+            $("#lap").click(recordLap);
+        });
+    </script>
+</body>
+
+</html>
